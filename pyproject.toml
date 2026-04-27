@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "content-guard"
+version = "0.1.0"
+description = "Policy-driven content scanning and redaction for public publishing and agent output."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Solomon Neas" }]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "License :: OSI Approved :: Apache Software License",
+]
+
+[project.scripts]
+content-guard = "content_guard.cli:main"
+content-guard-git = "content_guard.git_scan:main"
+content-guard-commits = "content_guard.git_commits:main"
+content-guard-publish-check = "content_guard.publish_check:main"
+content-guard-pr = "content_guard.pr_draft:main"
+content-guard-pr-prepare = "content_guard.pr_prepare:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

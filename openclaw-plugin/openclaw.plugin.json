@@ -1,0 +1,48 @@
+{
+  "id": "content-guard",
+  "name": "Content Guard",
+  "description": "Runs Content Guard over outbound OpenClaw messages before delivery",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "type": "boolean"
+      },
+      "dryRun": {
+        "type": "boolean"
+      },
+      "allowedRecipients": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "rootDir": {
+        "type": "string"
+      },
+      "policyPath": {
+        "type": "string"
+      },
+      "pythonCommand": {
+        "type": "string"
+      },
+      "timeoutMs": {
+        "type": "number"
+      },
+      "failOpen": {
+        "type": "boolean"
+      },
+      "failureReplacement": {
+        "type": "string"
+      },
+      "opf": {
+        "type": "boolean"
+      },
+      "opfDevice": {
+        "type": "string"
+      },
+      "opfBin": {
+        "type": "string"
+      }
+    }
+  }
+}
