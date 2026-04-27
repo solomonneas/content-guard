@@ -1,0 +1,10 @@
+{
+  "name": "content-guard-openclaw-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenClaw outbound message adapter for Content Guard",
+  "openclaw": {
+    "extensions": ["./index.mjs"]
+  }
+}
