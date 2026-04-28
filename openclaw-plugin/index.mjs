@@ -5,7 +5,7 @@ import { dirname, isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const PLUGIN_DIR = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_ROOT = resolve(PLUGIN_DIR, "..");
+const DEFAULT_ROOT = PLUGIN_DIR;
 
 export default function register(api) {
   const cfg = api.pluginConfig ?? {};

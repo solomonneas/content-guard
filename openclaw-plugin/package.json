@@ -1,10 +1,47 @@
 {
-  "name": "content-guard-openclaw-plugin",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@solomonneas/content-guard",
+  "version": "0.1.1",
   "type": "module",
-  "description": "OpenClaw outbound message adapter for Content Guard",
+  "description": "OpenClaw outbound message adapter for Content Guard. Scans and redacts outbound messages before delivery using the content-guard Python package.",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./openclaw.plugin.json": "./openclaw.plugin.json"
+  },
+  "files": [
+    "index.mjs",
+    "openclaw.plugin.json",
+    "policies/",
+    "README.md",
+    "LICENSE"
+  ],
   "openclaw": {
     "extensions": ["./index.mjs"]
+  },
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "content-guard",
+    "redaction",
+    "pii",
+    "secrets",
+    "scrub"
+  ],
+  "author": "Solomon Neas",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/solomonneas/content-guard#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solomonneas/content-guard.git",
+    "directory": "openclaw-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/solomonneas/content-guard/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
