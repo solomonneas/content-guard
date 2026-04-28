@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import argparse
 import json
+from importlib.abc import Traversable
+from os import PathLike
 from pathlib import Path
 
 from .engine import scan_text
-from .policy import load_policy
+from .policy import default_policy, load_policy
 from .report import to_payload, to_text
 from .types import ScanOptions
 
@@ -53,8 +55,8 @@ def main(argv: list[str] | None = None) -> int:
     return 1 if result.blocked and args.strict else 0
 
 
-def _default_policy_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "policies" / "pr-draft.json"
+def _default_policy_path() -> Path | PathLike[str] | Traversable:
+    return default_policy("pr-draft.json")
 
 
 def _default_output_path(target: Path) -> Path:

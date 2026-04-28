@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from importlib.abc import Traversable
+from os import PathLike
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -10,7 +12,7 @@ from typing import Any
 from .git_commits import _commit_revs, _git, _subject
 from .git_scan import _read_text, _tracked_paths
 from .engine import scan_text
-from .policy import load_policy
+from .policy import default_policy, load_policy
 from .pr_prepare import prepare_pr_body
 from .report import to_text
 
@@ -131,7 +133,7 @@ def run_publish_check(args: argparse.Namespace) -> tuple[dict[str, Any], list[st
     return payload, lines
 
 
-def _prepare_pr_check(args: argparse.Namespace, policy_path: Path) -> tuple[dict[str, Any], Any]:
+def _prepare_pr_check(args: argparse.Namespace, policy_path: Path | PathLike[str] | Traversable) -> tuple[dict[str, Any], Any]:
     source = Path(args.pr_body)
     out_dir = Path(args.out_dir) if args.out_dir else Path(".content-guard") / "pr-drafts"
     payload, result = prepare_pr_body(
@@ -247,8 +249,8 @@ def _summary_line(label: str, payload: dict[str, Any]) -> str:
     return f"{label}: clean"
 
 
-def _default_policy_path(name: str) -> Path:
-    return Path(__file__).resolve().parents[2] / "policies" / name
+def _default_policy_path(name: str) -> Path | PathLike[str] | Traversable:
+    return default_policy(name)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from importlib import resources
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -84,6 +85,12 @@ class EngineTests(unittest.TestCase):
         self.assertIn(("api-key-assignment", "block"), actions)
         self.assertIn(("email", "block"), actions)
         self.assertTrue(result.blocked)
+
+    def test_packaged_policy_resource_loads(self) -> None:
+        policy_path = resources.files("content_guard").joinpath("policies", "public-content.json")
+        policy = load_policy(policy_path)
+
+        self.assertEqual(policy.name, "public-content")
 
     def test_secret_assignment_preserves_sentence_punctuation(self) -> None:
         # content-guard: allow api-key-assignment
