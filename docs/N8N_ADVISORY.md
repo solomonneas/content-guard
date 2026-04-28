@@ -77,6 +77,8 @@ For n8n Code nodes, prefer constructing the JSON payload from explicit fields
 such as title, body, markdown, or social post content. Avoid sending the entire
 item if it contains credentials, cookies, or private execution metadata.
 
+For a node-by-node setup, see [N8N_WORKFLOW_RECIPE.md](N8N_WORKFLOW_RECIPE.md).
+
 ## Promotion Rules
 
 - PR body checks can stay advisory if publishing uses sanitized output.

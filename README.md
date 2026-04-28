@@ -128,7 +128,8 @@ gh pr create --body-file .content-guard/pr-drafts/pr-body.public.md
 For local run-alongside testing against the legacy scrubber, see [docs/DOGFOOD_TEST_REPO.md](docs/DOGFOOD_TEST_REPO.md).
 
 For n8n publish workflows, start with an advisory step that reports findings
-without mutating live publishes. See [docs/N8N_ADVISORY.md](docs/N8N_ADVISORY.md).
+without mutating live publishes. See [docs/N8N_ADVISORY.md](docs/N8N_ADVISORY.md)
+and [docs/N8N_WORKFLOW_RECIPE.md](docs/N8N_WORKFLOW_RECIPE.md).
 
 ## OpenClaw Plugin
 
