@@ -101,6 +101,7 @@ python -m content_guard diff examples/pr-body.md --policy policies/pr-draft.json
 python -m content_guard.pr_draft examples/pr-body.md
 python -m content_guard.pr_prepare examples/pr-body.md --json
 python -m content_guard.publish_check --pr-body examples/pr-body.md --json
+python -m content_guard.n8n_advisory < payload.json
 python -m content_guard.git_scan --policy policies/public-repo.json
 python -m content_guard.git_scan --all-tracked --policy policies/public-repo.json
 python -m content_guard.git_commits --range origin/main..HEAD --policy policies/public-repo.json
@@ -125,6 +126,10 @@ gh pr create --body-file .content-guard/pr-drafts/pr-body.public.md
 ```
 
 For local run-alongside testing against the legacy scrubber, see [docs/DOGFOOD_TEST_REPO.md](docs/DOGFOOD_TEST_REPO.md).
+
+For n8n publish workflows, start with an advisory step that reports findings
+without mutating live publishes. See [docs/N8N_ADVISORY.md](docs/N8N_ADVISORY.md)
+and [docs/N8N_WORKFLOW_RECIPE.md](docs/N8N_WORKFLOW_RECIPE.md).
 
 ## OpenClaw Plugin
 

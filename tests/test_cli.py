@@ -446,6 +446,67 @@ class CliTests(unittest.TestCase):
             "coauthored-by-trailer",
         )
 
+    def test_n8n_advisory_scans_text_payload(self) -> None:
+        proc = subprocess.run(
+            [sys.executable, "-m", "content_guard.n8n_advisory"],
+            cwd=ROOT,
+            env={"PYTHONPATH": str(ROOT / "src")},
+            input=json.dumps(
+                {
+                    "text": "Public post draft for release notes",
+                    "name": "social-draft",
+                    "policy": "public-content",
+                    "source": "n8n:unit-test",
+                }
+            ),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(proc.returncode, 0)
+        payload = json.loads(proc.stdout)
+        self.assertTrue(payload["ok"])
+        self.assertFalse(payload["blocked"])
+        self.assertEqual(payload["name"], "social-draft")
+        self.assertEqual(payload["source"], "n8n:unit-test")
+        self.assertIn("sanitized_text", payload)
+
+    def test_n8n_advisory_strict_blocks_findings(self) -> None:
+        proc = subprocess.run(
+            [sys.executable, "-m", "content_guard.n8n_advisory", "--strict"],
+            cwd=ROOT,
+            env={"PYTHONPATH": str(ROOT / "src")},
+            # content-guard: allow localhost-port
+            input=json.dumps({"text": "Draft references localhost:5204", "policy": "public-content"}),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(proc.returncode, 1)
+        payload = json.loads(proc.stdout)
+        self.assertFalse(payload["ok"])
+        self.assertTrue(payload["blocked"])
+        self.assertTrue(payload["advisory"])
+        self.assertIn("[redacted-service]", payload["sanitized_text"])
+
+    def test_n8n_advisory_rejects_missing_text(self) -> None:
+        proc = subprocess.run(
+            [sys.executable, "-m", "content_guard.n8n_advisory"],
+            cwd=ROOT,
+            env={"PYTHONPATH": str(ROOT / "src")},
+            input=json.dumps({"policy": "public-content"}),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(proc.returncode, 2)
+        payload = json.loads(proc.stdout)
+        self.assertFalse(payload["ok"])
+        self.assertIn("text", payload["error"])
+
     def _init_repo(self, repo: Path) -> None:
         subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True, text=True)
         subprocess.run(["git", "config", "user.name", "Example User"], cwd=repo, check=True)

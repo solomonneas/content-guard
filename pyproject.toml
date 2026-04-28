@@ -21,6 +21,7 @@ content-guard = "content_guard.cli:main"
 content-guard-git = "content_guard.git_scan:main"
 content-guard-commits = "content_guard.git_commits:main"
 content-guard-publish-check = "content_guard.publish_check:main"
+content-guard-n8n-advisory = "content_guard.n8n_advisory:main"
 content-guard-pr = "content_guard.pr_draft:main"
 content-guard-pr-prepare = "content_guard.pr_prepare:main"
 
