@@ -22,8 +22,12 @@ content-guard-git = "content_guard.git_scan:main"
 content-guard-commits = "content_guard.git_commits:main"
 content-guard-publish-check = "content_guard.publish_check:main"
 content-guard-n8n-advisory = "content_guard.n8n_advisory:main"
+content-guard-n8n-validate = "content_guard.n8n_validate:main"
 content-guard-pr = "content_guard.pr_draft:main"
 content-guard-pr-prepare = "content_guard.pr_prepare:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+content_guard = ["policies/*.json"]

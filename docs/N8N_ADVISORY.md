@@ -78,6 +78,8 @@ such as title, body, markdown, or social post content. Avoid sending the entire
 item if it contains credentials, cookies, or private execution metadata.
 
 For a node-by-node setup, see [N8N_WORKFLOW_RECIPE.md](N8N_WORKFLOW_RECIPE.md).
+For synthetic fixture validation, see
+[N8N_VALIDATION_PACK.md](N8N_VALIDATION_PACK.md).
 
 ## Promotion Rules
 

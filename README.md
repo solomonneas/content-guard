@@ -102,6 +102,7 @@ python -m content_guard.pr_draft examples/pr-body.md
 python -m content_guard.pr_prepare examples/pr-body.md --json
 python -m content_guard.publish_check --pr-body examples/pr-body.md --json
 python -m content_guard.n8n_advisory < payload.json
+python -m content_guard.n8n_validate --json
 python -m content_guard.git_scan --policy policies/public-repo.json
 python -m content_guard.git_scan --all-tracked --policy policies/public-repo.json
 python -m content_guard.git_commits --range origin/main..HEAD --policy policies/public-repo.json
@@ -129,7 +130,8 @@ For local run-alongside testing against the legacy scrubber, see [docs/DOGFOOD_T
 
 For n8n publish workflows, start with an advisory step that reports findings
 without mutating live publishes. See [docs/N8N_ADVISORY.md](docs/N8N_ADVISORY.md)
-and [docs/N8N_WORKFLOW_RECIPE.md](docs/N8N_WORKFLOW_RECIPE.md).
+and [docs/N8N_WORKFLOW_RECIPE.md](docs/N8N_WORKFLOW_RECIPE.md). Validate cloned
+workflow wiring with [docs/N8N_VALIDATION_PACK.md](docs/N8N_VALIDATION_PACK.md).
 
 ## OpenClaw Plugin
 

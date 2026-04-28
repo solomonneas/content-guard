@@ -3,11 +3,13 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from importlib.abc import Traversable
+from os import PathLike
 from pathlib import Path
 from typing import Any
 
 from .engine import scan_text
-from .policy import load_policy
+from .policy import default_policy, load_policy
 from .report import to_payload
 from .types import ScanOptions
 
@@ -77,14 +79,14 @@ def run_advisory_check(request: dict[str, Any], args: argparse.Namespace) -> dic
     }
 
 
-def _policy_path(value: str) -> Path:
+def _policy_path(value: str) -> Path | PathLike[str] | Traversable:
     path = Path(value)
     if path.is_file():
         return path
 
     alias = POLICY_ALIASES.get(value)
     if alias:
-        return Path(__file__).resolve().parents[2] / "policies" / alias
+        return default_policy(alias)
 
     raise ValueError(f"unknown policy alias or file: {value}")
 

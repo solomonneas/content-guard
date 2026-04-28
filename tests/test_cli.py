@@ -507,6 +507,55 @@ class CliTests(unittest.TestCase):
         self.assertFalse(payload["ok"])
         self.assertIn("text", payload["error"])
 
+    def test_n8n_validation_pack_passes(self) -> None:
+        proc = subprocess.run(
+            [sys.executable, "-m", "content_guard.n8n_validate", "--json"],
+            cwd=ROOT,
+            env={"PYTHONPATH": str(ROOT / "src")},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(proc.returncode, 0)
+        payload = json.loads(proc.stdout)
+        self.assertTrue(payload["ok"])
+        self.assertGreaterEqual(len(payload["fixtures"]), 5)
+
+    def test_n8n_validation_pack_reports_expectation_failure(self) -> None:
+        with TemporaryDirectory() as tmp:
+            fixture_dir = Path(tmp)
+            (fixture_dir / "mismatch.json").write_text(
+                json.dumps(
+                    {
+                        "request": {
+                            "text": "Clean publish draft",
+                            "name": "mismatch",
+                            "policy": "public-content",
+                        },
+                        "expected": {
+                            "blocked": True,
+                            "changed": True,
+                            "finding_rule_ids": ["localhost-port"],
+                        },
+                    }
+                )
+            )
+
+            proc = subprocess.run(
+                [sys.executable, "-m", "content_guard.n8n_validate", str(fixture_dir), "--json"],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src")},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(proc.returncode, 1)
+        payload = json.loads(proc.stdout)
+        self.assertFalse(payload["ok"])
+        self.assertIn("expected blocked", payload["fixtures"][0]["failures"][0])
+
     def _init_repo(self, repo: Path) -> None:
         subprocess.run(["git", "init"], cwd=repo, check=True, capture_output=True, text=True)
         subprocess.run(["git", "config", "user.name", "Example User"], cwd=repo, check=True)

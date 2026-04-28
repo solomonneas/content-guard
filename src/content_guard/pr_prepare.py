@@ -4,10 +4,12 @@ import argparse
 import json
 import re
 import sys
+from importlib.abc import Traversable
+from os import PathLike
 from pathlib import Path
 
 from .engine import scan_text
-from .policy import load_policy
+from .policy import default_policy, load_policy
 from .report import to_payload, to_text
 from .types import GuardResult, ScanOptions
 
@@ -16,7 +18,7 @@ def prepare_pr_body(
     text: str,
     *,
     source: Path | None,
-    policy_path: Path,
+    policy_path: Path | PathLike[str] | Traversable,
     out_dir: Path,
     name: str,
     strict: bool = False,
@@ -110,8 +112,8 @@ def _read_target(target: str | None) -> tuple[str, Path | None]:
     return path.read_text(), path
 
 
-def _default_policy_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "policies" / "pr-draft.json"
+def _default_policy_path() -> Path | PathLike[str] | Traversable:
+    return default_policy("pr-draft.json")
 
 
 def _default_name(source: Path | None) -> str:

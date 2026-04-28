@@ -3,6 +3,9 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
+from importlib import resources
+from importlib.abc import Traversable
+from os import PathLike
 from pathlib import Path
 from typing import Any
 
@@ -49,12 +52,31 @@ def _as_action(value: Any, where: str) -> Action:
     return value  # type: ignore[return-value]
 
 
-def load_policy(path: str | Path | None) -> Policy:
+def default_policy(name: str) -> Path | Traversable:
+    repo_path = Path(__file__).resolve().parents[2] / "policies" / name
+    if repo_path.is_file():
+        return repo_path
+
+    packaged_path = resources.files("content_guard").joinpath("policies", name)
+    if packaged_path.is_file():
+        return packaged_path
+
+    return repo_path
+
+
+def load_policy(path: str | PathLike[str] | Traversable | None) -> Policy:
     if path is None:
         return Policy()
 
-    policy_path = Path(path)
-    raw = json.loads(policy_path.read_text())
+    if isinstance(path, (str, PathLike)):
+        policy_path = Path(path)
+        raw_text = policy_path.read_text()
+        fallback_name = policy_path.stem
+    else:
+        raw_text = path.read_text()
+        fallback_name = Path(path.name).stem
+
+    raw = json.loads(raw_text)
     if not isinstance(raw, dict):
         raise ValueError("policy root must be an object")
 
@@ -72,7 +94,7 @@ def load_policy(path: str | Path | None) -> Policy:
         rules["opf-pii"] = opf_backend.action
 
     return Policy(
-        name=str(raw.get("name") or policy_path.stem),
+        name=str(raw.get("name") or fallback_name),
         defaults=defaults,
         rules=rules,
         custom_rules=custom_rules,

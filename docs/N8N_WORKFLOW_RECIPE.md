@@ -7,6 +7,9 @@ OpenClaw behavior.
 Use this first in a cloned workflow. Promote to strict blocking only after the
 clone passes synthetic leak tests and normal draft traffic.
 
+For synthetic fixture validation, see
+[N8N_VALIDATION_PACK.md](N8N_VALIDATION_PACK.md).
+
 ## Node Sequence
 
 Place these nodes immediately before the public side effect:
@@ -133,5 +136,7 @@ error path routes the item to review instead of dropping it silently.
 - The raw report is stored internally because findings can include matched text.
 - Clean sample drafts continue through the publish branch.
 - Synthetic leak samples produce `content_guard.blocked=true`.
+- The validation pack in `examples/n8n-validation/` passes locally and through
+  the cloned workflow.
 - Strict mode is tested in the clone before any live workflow uses it.
 - OpenClaw outbound-message guarding remains single-owner.
