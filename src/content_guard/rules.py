@@ -15,9 +15,16 @@ DEFAULT_RULES: tuple[Rule, ...] = (
     Rule(
         id="private-ipv4",
         category="infrastructure",
-        pattern=r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3})\b",
+        pattern=r"\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3})\b",
         replacement="[redacted-ip]",
-        description="RFC 1918 or loopback IPv4 address.",
+        description="RFC 1918 private IPv4 address.",
+    ),
+    Rule(
+        id="loopback-ipv4",
+        category="infrastructure",
+        pattern=r"\b127\.\d{1,3}\.\d{1,3}\.\d{1,3}\b",
+        replacement="[redacted-ip]",
+        description="Loopback IPv4 address.",
     ),
     Rule(
         id="localhost-port",
@@ -62,9 +69,17 @@ DEFAULT_RULES: tuple[Rule, ...] = (
     Rule(
         id="us-phone",
         category="pii",
-        pattern=r"\b(?:\+?1[\s.-]?)?(?:\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}\b",
+        pattern=(
+            r"(?:"
+            r"(?<!\w)\+1[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}(?!\w)"
+            r"|(?<!\w)\(\d{3}\)\s*\d{3}[\s.-]?\d{4}(?!\w)"
+            r"|(?<!\w)\d{3}[\s.-]\d{3}[\s.-]\d{4}(?!\w)"
+            r"|\b(?:phone|tel|call)[\s:]+\+?1?[\s.-]?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}(?!\w)"
+            r")"
+        ),
         replacement="<PRIVATE_PHONE>",
-        description="US-style phone number.",
+        description="US-style phone number with phone-shape separators or a phone/tel/call cue word.",
+        flags=re.IGNORECASE,
     ),
     Rule(
         id="bearer-token",

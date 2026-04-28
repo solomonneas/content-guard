@@ -91,6 +91,13 @@ Actions:
 - `warn`: report without failing
 - `allow`: ignore matching findings
 
+### Bundled policies
+
+Two of the bundled policies share the `infrastructure` category but treat it differently on purpose:
+
+- `policies/public-repo.json` — for technical docs repos. Keeps `private-ipv4` (RFC 1918), secrets, PII, and `Co-authored-by` trailers as hard blocks, but downgrades `loopback-ipv4` (127.x), `localhost-port`, `localhost-bare`, and `port-reference` to warnings. README and CONTRIBUTING legitimately have to discuss `localhost`, named ports, and `127.0.0.1` for setup instructions. See [policies/public-repo.md](policies/public-repo.md) for the long-form rationale.
+- `policies/public-content.json` — for blog posts and social drafts. Keeps the full infrastructure category at block, since marketing surfaces have a higher leak risk and shouldn't discuss internal addresses or named ports at all.
+
 ## PR And Git Guards
 
 PR bodies and public repository content are publishing boundaries too. Use stricter policies before copying generated summaries, dogfood notes, local test output, fixtures, or docs into public GitHub surfaces:

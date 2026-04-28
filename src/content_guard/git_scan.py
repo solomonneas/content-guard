@@ -79,9 +79,16 @@ def _default_repo_policy() -> Policy:
             "pii": "block",
             "personal": "block",
             "business": "block",
+            "attribution": "block",
             "tooling": "warn",
         },
-        rules={"opf-pii": "warn"},
+        rules={
+            "loopback-ipv4": "warn",
+            "localhost-port": "warn",
+            "localhost-bare": "warn",
+            "port-reference": "warn",
+            "opf-pii": "warn",
+        },
     )
 
 
