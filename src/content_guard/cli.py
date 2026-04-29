@@ -12,6 +12,27 @@ from .report import to_json, to_payload, to_text
 from .types import ScanOptions
 
 
+DEFAULT_EXCLUDE_DIR_NAMES = frozenset(
+    {
+        "node_modules",
+        ".git",
+        "dist",
+        "build",
+        "coverage",
+        ".next",
+        ".cache",
+        ".venv",
+        "__pycache__",
+        ".pytest_cache",
+        "out",
+        ".turbo",
+        ".parcel-cache",
+        "vendor",
+        ".claude",
+    }
+)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -158,9 +179,16 @@ def _diff(args: argparse.Namespace) -> int:
     return 1 if result.blocked else 0
 
 
-def _scan_directory(path: Path, policy, options: ScanOptions):
+def _scan_directory(
+    path: Path,
+    policy,
+    options: ScanOptions,
+    exclude_dirs: frozenset[str] = DEFAULT_EXCLUDE_DIR_NAMES,
+):
     results = []
     for file_path in sorted(path.rglob("*.md")):
+        if exclude_dirs.intersection(file_path.parts):
+            continue
         text = file_path.read_text()
         results.append((file_path, scan_text(text, policy=policy, options=options)))
     return results

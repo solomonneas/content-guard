@@ -44,6 +44,45 @@ class CliTests(unittest.TestCase):
         self.assertEqual(len(payload["files"]), 1)
         self.assertEqual(payload["files"][0]["findings"][0]["rule_id"], "localhost-port")
 
+    def test_scan_directory_skips_generated_dirs(self) -> None:
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            # content-guard: allow localhost-port
+            leak_text = "Service is localhost:5204.\n"
+            (root / "README.md").write_text(leak_text)
+
+            for excluded in ("node_modules/foo", ".git", "dist", "build", "coverage", ".next", ".venv", "__pycache__", "vendor/sub", ".claude"):
+                excluded_dir = root / excluded
+                excluded_dir.mkdir(parents=True)
+                (excluded_dir / "README.md").write_text(leak_text)
+
+            proc = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "content_guard",
+                    "scan",
+                    str(root),
+                    "--policy",
+                    str(ROOT / "policies" / "public-content.json"),
+                    "--json",
+                ],
+                cwd=ROOT,
+                env={"PYTHONPATH": str(ROOT / "src")},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(proc.returncode, 1, msg=proc.stdout + proc.stderr)
+        payload = json.loads(proc.stdout)
+        self.assertEqual(payload["files_scanned"], 1)
+        self.assertEqual(len(payload["files"]), 1)
+        self.assertTrue(payload["files"][0]["path"].endswith("README.md"))
+        for entry in payload["files"]:
+            for excluded in ("node_modules", ".git", "dist", "build", "coverage", ".next", ".venv", "__pycache__", "vendor", ".claude"):
+                self.assertNotIn(f"/{excluded}/", entry["path"])
+
     def test_pr_draft_helper_is_advisory_by_default(self) -> None:
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
